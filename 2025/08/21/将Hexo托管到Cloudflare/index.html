@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="false" > 
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>将Hexo托管到Cloudflare（适用于没有服务器，免费） | TheLittleQuteGDHのBlog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="Hexo博客免费托管到Cloudflare由于本人没有Money买任何的服务器，所以就让赛博大善人CloudFlare帮我托管博客，并且是免费的，无需信用卡和SFZ本期教程有部分照抄自CM大佬的博客“加速你的项目！详解 Cloudflare Workers &amp; Pages 优选域名设置 | CMLiussss Blog”准备工作 请注册好1个Cloudflare帐号，Cloudflare官">
+<meta property="og:type" content="article">
+<meta property="og:title" content="将Hexo托管到Cloudflare（适用于没有服务器，免费）">
+<meta property="og:url" content="http://example.com/2025/08/21/%E5%B0%86Hexo%E6%89%98%E7%AE%A1%E5%88%B0Cloudflare/index.html">
+<meta property="og:site_name" content="TheLittleQuteGDHのBlog">
+<meta property="og:description" content="Hexo博客免费托管到Cloudflare由于本人没有Money买任何的服务器，所以就让赛博大善人CloudFlare帮我托管博客，并且是免费的，无需信用卡和SFZ本期教程有部分照抄自CM大佬的博客“加速你的项目！详解 Cloudflare Workers &amp; Pages 优选域名设置 | CMLiussss Blog”准备工作 请注册好1个Cloudflare帐号，Cloudflare官">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/TheLittleQuteGDH/gdhblog.github.io/blob/main/img/hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/4.PNG?raw=true">
+<meta property="og:image" content="https://github.com/TheLittleQuteGDH/gdhblog.github.io/blob/main/img/hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/5.PNG?raw=true">
+<meta property="article:published_time" content="2025-08-21T05:26:55.000Z">
+<meta property="article:modified_time" content="2025-08-22T10:11:24.468Z">
+<meta property="article:author" content="TheLittleQuteGDH">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/TheLittleQuteGDH/gdhblog.github.io/blob/main/img/hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/4.PNG?raw=true">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  
+   
+  <div id="main-grid" class="  ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>TheLittleQuteGDHのBlog </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">主页</a>
+    
+      <a class="main-nav-link" href="/archives">归档</a>
+    
+      <a class="main-nav-link" href="/about">关于</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">主页</a>
+    
+      <a class="nav-dropdown-link" href="/archives">归档</a>
+    
+      <a class="nav-dropdown-link" href="/about">关于</a>
+    
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">TheLittleQuteGDH </div>
+      <div class="dot"></div>
+      <div class="subtitle">这里是TheLittleQuteGDH的博客 </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://twitter.com" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://store.steampowered.com" title="Steam"><i class="fa-brands fa-steam"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+
+    
+      
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+
+<article id="post-将Hexo托管到Cloudflare" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        将Hexo托管到Cloudflare（适用于没有服务器，免费）
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2025-08-21T05:26:55.000Z" itemprop="datePublished">2025-08-21</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            2.8k 词 
+          </div>
+        </div>
+        
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h1 id="Hexo博客免费托管到Cloudflare"><a href="#Hexo博客免费托管到Cloudflare" class="headerlink" title="Hexo博客免费托管到Cloudflare"></a>Hexo博客免费托管到Cloudflare</h1><h2 id="由于本人没有Money买任何的服务器，所以就让赛博大善人CloudFlare帮我托管博客，并且是免费的，无需信用卡和SFZ"><a href="#由于本人没有Money买任何的服务器，所以就让赛博大善人CloudFlare帮我托管博客，并且是免费的，无需信用卡和SFZ" class="headerlink" title="由于本人没有Money买任何的服务器，所以就让赛博大善人CloudFlare帮我托管博客，并且是免费的，无需信用卡和SFZ"></a>由于本人没有Money买任何的服务器，所以就让赛博大善人CloudFlare帮我托管博客，并且是免费的，无需信用卡和SFZ</h2><h2 id="本期教程有部分照抄自CM大佬的博客“加速你的项目！详解-Cloudflare-Workers-Pages-优选域名设置-CMLiussss-Blog”"><a href="#本期教程有部分照抄自CM大佬的博客“加速你的项目！详解-Cloudflare-Workers-Pages-优选域名设置-CMLiussss-Blog”" class="headerlink" title="本期教程有部分照抄自CM大佬的博客“加速你的项目！详解 Cloudflare Workers &amp; Pages 优选域名设置 | CMLiussss Blog”"></a>本期教程有部分照抄自CM大佬的博客<a target="_blank" rel="noopener" href="https://blog.cmliussss.com/p/BestWorkers/">“加速你的项目！详解 Cloudflare Workers &amp; Pages 优选域名设置 | CMLiussss Blog”</a></h2><h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>请注册好1个Cloudflare帐号，Cloudflare官网：<a target="_blank" rel="noopener" href="https://dash.cloudflare.com/">https://dash.cloudflare.com，如果卡在加载界面可打开科学上网</a></li>
+<li>准备好1个已经托管到Cloudflare的域名，例如：thelittlequtegdh.dpdns.org</li>
+<li>准备好1个Github帐号（如果要托管到CloudFlare Pages可以忽略这一步），Github官网：<a target="_blank" rel="noopener" href="https://github.com/">https://github.com</a></li>
+<li>准备一个华为云国际版帐号（如果你使用Cloudflare Worker进行托管，可忽略这一步），华为云国际版官网：<a target="_blank" rel="noopener" href="https://auth.huaweicloud.com/authui/login.html?service=https://console-intl.huaweicloud.com/dns/#/login">点我进入（如果频繁跳转到中国站登录界面请打开全局代理模式，必须是国际版！）</a></li>
+</ol>
+<h2 id="注册账号"><a href="#注册账号" class="headerlink" title="注册账号"></a>注册账号</h2><p>1、Cloudflare</p>
+<p>打开Cloudflare官网-点击右上角登录（有账号可直接输入账号密码登录）-点击左下角注册-输入您的电子邮件和密码-选择创建帐户。</p>
+<p>2、Github</p>
+<p>打开Github官网-点击Sign in-填写昵称（用户名）注册邮箱和密码-进行人机验证</p>
+<p>3、华为云国际版（如果你使用Cloudflare Worker进行托管，可忽略这一步）</p>
+<p>打开华为云国际版官网（国际版不需要实名，如果注册时频繁跳转国内版本，请打开全局代理模式注册）-设置您的安全手机（可以直接跳过）-跳转到完善信息页面说明注册已完成，无视绑定提示即可。直接点左上角返回</p>
+<h2 id="开始托管"><a href="#开始托管" class="headerlink" title="开始托管"></a>开始托管</h2><h3 id="1、Cloudflare-Worker的托管方法"><a href="#1、Cloudflare-Worker的托管方法" class="headerlink" title="1、Cloudflare Worker的托管方法"></a>1、Cloudflare Worker的托管方法</h3><h4 id="Github操作部分"><a href="#Github操作部分" class="headerlink" title="Github操作部分"></a>Github操作部分</h4><p>1、在你的Hexo博客目录下，运行<strong>Hexo g</strong>生成网页，打开目录下的“public”文件夹（前提是先编辑好文档再运行命令）</p>
+<p>2、打开你注册好的Github，点击右上角头像，点击“Your repositories”</p>
+<p><img src="https://github.com/TheLittleQuteGDH/gdhblog.github.io/blob/main/img/hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/4.PNG?raw=true" alt="Your repositories"></p>
+<p>3、再点击右上角带绿色按钮的“New”，新建一个仓库，名字可以随便起，点击Create repository</p>
+<p><img src="https://github.com/TheLittleQuteGDH/gdhblog.github.io/blob/main/img/hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/5.PNG?raw=true" alt="New"></p>
+<p>4、在新建的仓库中，点击issues，点击“Add File“，点击”upload files“，在打开的页面中，回到你创建博客的文件夹，打开public文件夹，将里面所有的内容全部拖到GitHub上传界面中，等到全部上传成功，点击Commit changes，等待一会就可以全部上传了</p>
+<p>5、需要在你的仓库中创建一个文件，取名为”wrangler.jsonc“，点击”add file”，选择“create new file”，在路径中修改名字，然后粘贴并修改以下代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	    &quot;name&quot;: &quot;项目名，与你的Cloudflare项目名相同&quot;,</span><br><span class="line">	    &quot;compatibility_date&quot;: &quot;2025-08-20&quot;,</span><br><span class="line">	    &quot;assets&quot;: &#123;</span><br><span class="line">	      &quot;directory&quot;: &quot;./&quot;</span><br><span class="line">	    &#125;</span><br><span class="line">	  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="Cloudflare操作部分（Worker）"><a href="#Cloudflare操作部分（Worker）" class="headerlink" title="Cloudflare操作部分（Worker）"></a>Cloudflare操作部分（Worker）</h4><p>1、访问Cloudflare，在侧边栏中点击”计算（workers）“</p>
+<p>2、点击右上角”创建“</p>
+<p>3、选择workers，并且点击选择”导入存储库“</p>
+<p>4、选择Github帐号，并登录自己刚刚创建好的Github帐号，选择刚刚自己创建好的仓库</p>
+<p>5、自己创建一个项目名称，例如我这里叫blog，则你修改你刚刚创建的wrangler.jsonc文件的“name”为“blog”，不要勾选非生产分支构建“</p>
+<p>6、点击”创建和部署“就可以了，部署完成，但是默认的域名需要科学上网才能打开，这里建议添加自己的域名，回到Workers和pages，点击”设置“，找到域和路由，点击右上角”添加“，选择”路由“，区域选择你已经在cloudflare托管过的域名，路由填写你的域名（比如我在Cloudflare托管的域名为thelittlequtegdh.dpdns.org，则你可以填写”你的前缀“.thelittlequtegdh.dpdns.org&#x2F;*，例如blog.thelittlequtegdh.dpdns.org）</p>
+<blockquote>
+<p>[!IMPORTANT]</p>
+<p>这里有个重要事项，添加路由填写的域名后面一定要加&#x2F;*！！很重要！</p>
+</blockquote>
+<p>好了，接下来请返回Cloudflare的主界面，找到你的域名，点开，然后找到DNS记录，添加一条CNAME记录，名称填写你的前缀，接着可以填写你自己找的优选域名，关于优选域名记录可以参考这两篇文章<a target="_blank" rel="noopener" href="https://blog.thelittlequtegdh.dpdns.org/2025/08/20/CloudFlare%EF%BC%8CEdgeone%E4%BC%98%E9%80%89%E5%9F%9F%E5%90%8D/">CloudFlare，Edgeone优选域名记录</a>，和<a target="_blank" rel="noopener" href="https://blog.cmliussss.com/p/CloudFlare%E4%BC%98%E9%80%89/#%E6%88%91%E7%BB%B4%E6%8A%A4%E7%9A%84%E4%BC%98%E9%80%89%E5%AE%98%E6%96%B9%E5%9F%9F%E5%90%8D%EF%BC%8C%E6%9F%A5%E7%9C%8B%E6%9B%B4%E5%A4%9A%EF%BC%9Ahttps-cf-090227-xyz">CloudFlare中国大陆地区优选方案汇总</a></p>
+<p>选择一个你喜欢的域名，在你的域名处添加一个cname解析，我这里的名称填写“Blog”，然后目标填写优选域名，<strong>关闭小黄云</strong>点击确定就可以了，至此，worker部分已经完成</p>
+<h4 id="Cloudflare操作部分（pages）"><a href="#Cloudflare操作部分（pages）" class="headerlink" title="Cloudflare操作部分（pages）"></a>Cloudflare操作部分（pages）</h4><h5 id="1、创建pages"><a href="#1、创建pages" class="headerlink" title="1、创建pages"></a>1、创建pages</h5><p>pages的话稍稍有些麻烦，先完成Worker部分的1、2步，接着在第三步中，选择Pages，点击“使用直接上传”，你也可以使用“导入现有 Git 存储库”，就像刚刚创建worker一样。创建一个你喜欢的项目名称，例如这里叫“gdhblog”，并上传你博客文件的“public”文件夹下的所有内容，这里不是拖动文件夹，是点击文件夹，拖动里面的所有文件到浏览器，再点击上传，上传成功后，给 Pages 项目添加自定义域，并记录 CNAME 目标域名 “你的项目名称.pages.dev”，例如“gdhblog.pages.dev”，并等待自定义域生效，显示“活动”后，进行下一步</p>
+<h5 id="2、使用华为云云解析进行解析"><a href="#2、使用华为云云解析进行解析" class="headerlink" title="2、使用华为云云解析进行解析"></a>2、使用华为云云解析进行解析</h5><p>注册部分请跳转到本篇博客的“注册帐号”部分</p>
+<p>先<a target="_blank" rel="noopener" href="https://console-intl.huaweicloud.com/dns">点我华为云解析DNS</a>，然后点击“公网域名”，然后点击“创建公网域名”，填入需要优选的 <strong>Pages 自定义域名</strong>，就是你刚刚在pages步骤添加的自定义域，点击确定，点击你的域名的“管理解析”按钮，点击“添加记录集”，新添加一个<code>CNAME记录</code>，线路类型为全网默认，记录值为<strong>Pages 项目分配的域名（你的项目名称.pages.dev），例如gdhblog.pages.dev</strong>，点击“确定”按钮后，再添加一个<strong>CNAME记录</strong>，线路类型为<code>地域解析</code> &gt; <code>中国大陆</code>，记录值为<strong>你自己寻找的优选域名</strong>，比如CM大佬的cf.090227.xyz，鼠标指向第一条NS记录，将4条NS记录值一一复制出来保存好。给你将要使用的域名（比如我这里叫thelittlequtegdh.dpdns.org），添加4条华为云NS类型（就是你刚刚复制出来的那四个）的解析记录，即可生效。</p>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2025/08/21/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"
+      title="Hexo博客搭建"
+     >
+
+    <p class="title-text">
+      
+        Hexo博客搭建
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2025 TheLittleQuteGDH<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>
